@@ -31,7 +31,7 @@ class SpotifyInfoProvider(BaseInfoProvider):
         # TODO: Manage auth properly
         self.client = spotipy.Spotify(
             auth_manager=spotipy.SpotifyOAuth(
-                scope="user-library-read,user-read-private"
+                scope="user-library-read,user-follow-read,playlist-read-private"
             )
         )
 
