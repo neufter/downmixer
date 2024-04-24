@@ -69,7 +69,7 @@ class BasicProcessor:
             playlist_id (str): V"""
         songs = self.info_provider.get_all_playlist_songs(playlist_id)
 
-        tasks = [self.pool_processing(s.uri) for s in songs]
+        tasks = [self.pool_processing(s.id) for s in songs]
         await asyncio.gather(*tasks)
 
     async def process_song(self, song_id: str):

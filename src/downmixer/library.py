@@ -48,8 +48,8 @@ class Artist(BaseLibraryItem):
 
     name: str
     images: Optional[list[str]] = None
-    genres: Optional[list[dict]] = None
-    uri: Optional[str] = None
+    genres: Optional[list[str]] = None
+    id: Optional[str] = None
     url: Optional[str] = None
 
     @classmethod
@@ -68,7 +68,7 @@ class Artist(BaseLibraryItem):
             name=slugify(self.name),
             images=self.images,
             genres=[slugify(x) for x in self.genres] if self.genres else None,
-            uri=self.uri,
+            id=self.id,
             url=self.url,
         )
 
@@ -82,8 +82,8 @@ class Album(BaseLibraryItem):
     artists: Optional[list[Artist]] = None
     date: Optional[str] = None
     track_count: Optional[int] = None
-    images: Optional[list[dict]] = None
-    uri: Optional[str] = None
+    cover: Optional[str] = None
+    id: Optional[str] = None
     url: Optional[str] = None
 
     @classmethod
@@ -107,8 +107,8 @@ class Album(BaseLibraryItem):
             artists=[x.slug for x in self.artists] if self.artists else None,
             date=self.date,
             track_count=self.track_count,
-            images=self.images,
-            uri=self.uri,
+            cover=self.cover,
+            id=self.id,
             url=self.url,
         )
 
@@ -126,27 +126,9 @@ class Song(BaseLibraryItem):
     track_number: Optional[int] = None
     isrc: Optional[str] = None
     lyrics: Optional[str] = None
-    uri: Optional[str] = None
+    id: Optional[str] = None
     url: Optional[str] = None
-
-    @classmethod
-    def from_spotify(cls, data: dict[str, Any]) -> "Song":
-        return cls(
-            available_markets=data["available_markets"],
-            name=data["name"],
-            artists=Artist.from_spotify_list(data["artists"]),
-            album=Album.from_spotify(data["album"]),
-            duration=data["duration_ms"] / 1000,
-            date=data["release_date"] if "release_date" in data.keys() else None,
-            track_number=data["track_number"],
-            isrc=data["external_ids"]["isrc"],
-            uri=data["uri"],
-            url=data["external_urls"]["spotify"],
-        )
-
-    @classmethod
-    def from_spotify_list(cls, data: list[dict]) -> list:
-        return [cls.from_spotify(x["track"]) for x in data]
+    cover: Optional[str] = None
 
     def slug(self) -> "Song":
         """Returns self with sluggified text attributes."""
@@ -159,7 +141,7 @@ class Song(BaseLibraryItem):
             duration=self.duration,
             track_number=self.track_number,
             isrc=self.isrc,
-            uri=self.uri,
+            id=self.id,
             url=self.url,
             lyrics=slugify(self.lyrics) if self.lyrics else None,
         )
@@ -186,7 +168,7 @@ class Playlist(BaseLibraryItem):
     description: Optional[str] = None
     tracks: Optional[list[Song]] = None
     images: Optional[list[dict]] = None
-    uri: Optional[str] = None
+    id: Optional[str] = None
     url: Optional[str] = None
 
     @classmethod

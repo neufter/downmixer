@@ -160,7 +160,7 @@ class YouTubeMusicAudioProvider(BaseAudioProvider):
         self.client = ytmusicapi.YTMusic(auth=auth_headers, language="de")
 
     async def search(self, song: Song) -> Optional[list[AudioSearchResult]]:
-        logger.info(f"Initializing search for song '{song.title}' with URI {song.uri}")
+        logger.info(f"Initializing search for song '{song.title}' with URI {song.id}")
         if song.isrc:
             query = song.isrc
         else:
