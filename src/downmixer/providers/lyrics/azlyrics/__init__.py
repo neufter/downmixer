@@ -12,6 +12,8 @@ COPYRIGHT_DISCLAIMER = (
     "licensing agreement. Sorry about that."
 )
 
+# TODO: Remove AZLyrics and add Genius provider
+
 
 def search_result_from_azlyrics(
     result: ResultSet, original_song: Song

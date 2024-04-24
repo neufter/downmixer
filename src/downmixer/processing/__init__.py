@@ -51,6 +51,7 @@ class BasicProcessor:
         self.semaphore = asyncio.Semaphore(threads)
 
     async def _get_lyrics(self, download: Download):
+        # TODO: Test if lyrics are actually working
         lyrics_results = await self.lyrics_provider.search(download.song)
         if lyrics_results is not None:
             lyrics = await self.lyrics_provider.get_lyrics(lyrics_results[0])
