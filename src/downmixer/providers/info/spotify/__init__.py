@@ -74,3 +74,15 @@ class SpotifyInfoProvider(BaseInfoProvider):
         super().get_all_playlist_songs(playlist_id)
 
         return self._playlist_songs(playlist_id)
+
+    def get_all_user_playlists(self) -> list[SpotifyPlaylist]:
+        super().get_all_user_playlists()
+
+        results = _get_all(self._playlists)
+        return SpotifyPlaylist.from_provider_list(results)
+
+    def get_all_user_songs(self) -> list[SpotifySong]:
+        super().get_all_user_songs()
+
+        results = _get_all(self._saved_tracks, limit=50)
+        return SpotifySong.from_provider_list(results)

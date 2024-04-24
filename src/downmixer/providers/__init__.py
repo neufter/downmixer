@@ -230,6 +230,31 @@ class BaseInfoProvider:
 
         pass
 
+    def get_all_user_playlists(self) -> list[Playlist]:
+        """Retrieves the all the user's playlists in a list.
+
+        Returns:
+            User's playlists as a list of Playlist objects.
+        """
+        if not self.connected:
+            raise NotConnectedException(
+                "Not connected to platform, cannot retrieve data"
+            )
+        pass
+
+    def get_all_user_songs(self) -> list[Song]:
+        """Retrieves the all the user's liked/saved songs in a list (for example, on Spotify, should return user's
+        saved tracks).
+
+        Returns:
+            User's playlists as a list of Playlist objects.
+        """
+        if not self.connected:
+            raise NotConnectedException(
+                "Not connected to platform, cannot retrieve data"
+            )
+        pass
+
 
 # TODO: Add support for importing third-party providers
 def _import_submodules(prefix: str):
