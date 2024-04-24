@@ -34,7 +34,8 @@ class MatchQuality(Enum):
     Not the same song.
     """
 
-    PERFECT = 390
+    PERFECT = 400
+    GREAT = 390
     GOOD = 280
     MEDIOCRE = 150
     BAD = 0
@@ -53,10 +54,12 @@ class MatchResult:
     @property
     def quality(self) -> MatchQuality:
         """Returns the match quality from the enum `MatchQuality`."""
-        result = MatchQuality.BAD
+        result = MatchQuality.PERFECT
+        previous = MatchQuality.PERFECT
         for q in MatchQuality:
-            if self.sum <= q.value:
+            if q.value <= self.sum < previous.value:
                 result = q
+            previous = q
 
         return result
 

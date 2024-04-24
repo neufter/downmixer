@@ -39,7 +39,7 @@ class AudioSearchResult:
         Returns:
             song (Song): The appropriate song object.
         """
-        if self.match.quality == MatchQuality.PERFECT:
+        if self.match.quality == MatchQuality.PERFECT or self.match.quality.GREAT:
             return self._original_song
         else:
             return self._result_song
@@ -228,30 +228,6 @@ class BaseInfoProvider:
         if not self.check_valid_url(playlist_id, [ResourceType.PLAYLIST]):
             raise ValueError(f"{playlist_id} is an invalid playlist URL or ID")
 
-        pass
-
-    def get_all_playlists(self) -> list[Playlist]:
-        """Retrieves the all the user's playlists in a list.
-
-        Returns:
-            User's playlists as a list of Playlist objects.
-        """
-        if not self.connected:
-            raise NotConnectedException(
-                "Not connected to platform, cannot retrieve data"
-            )
-        pass
-
-    def get_all_saved_tracks(self) -> list[Song]:
-        """Retrieves the all the user's saved tracks in a list.
-
-        Returns:
-            User's playlists as a list of Playlist objects.
-        """
-        if not self.connected:
-            raise NotConnectedException(
-                "Not connected to platform, cannot retrieve data"
-            )
         pass
 
 
