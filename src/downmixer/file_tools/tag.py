@@ -22,7 +22,7 @@ def tag_download(download: Download):
     _save_easy_tag(download)
 
     has_cover = (
-        download.song.album.images is not None and len(download.song.album.images) != 0
+        download.song.album.cover is not None and len(download.song.album.cover) != 0
     )
     if download.song.lyrics or has_cover:
         _save_advanced_tag(download, has_cover)
@@ -61,7 +61,7 @@ def _save_advanced_tag(download: Download, has_cover):
             encoding=3, lang="eng", desc="Unsynced Lyrics", text=download.song.lyrics
         )
     if has_cover:
-        url = download.song.album.images[0]["url"]
+        url = download.song.album.cover
         logger.debug(f"Downloading cover image from URL {url}")
 
         with urlopen(url) as raw_image:
