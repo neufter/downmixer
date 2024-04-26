@@ -44,12 +44,13 @@ theme:
   features:
     - search.suggest
     - search.highlight
-    - toc.integrate
+    - toc.follow
     - navigation.instant
+    - navigation.instant.progress
     - navigation.tracking
-    - navigation.sections
     - navigation.top
     - navigation.footer
+    - navigation.indexes
 
 extra_css:
   - stylesheets/extra.css
