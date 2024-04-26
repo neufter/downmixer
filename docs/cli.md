@@ -5,7 +5,8 @@ to automate syncing of music from any music library, audio, and lyrics platform.
 
 That being said, Downmixer *does* provide a simple command line interface for convenience, testing and simple usage.
 
-It uses the default [`BasicProcessor`](/reference/processing/#downmixer.processing.BasicProcessor) class to search,
+It uses the default [`BasicProcessor`](reference/processing/index.md#downmixer.processing.BasicProcessor) class to
+search,
 download and convert a song, playlist or album. It uses the bundled `SpotifyInfoProvider`, meaning the `id` value must
 be a valid Spotify track, album or playlist ID.
 

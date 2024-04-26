@@ -16,7 +16,7 @@ class AlbumType(Enum):
 class BaseLibraryItem:
     """Base class for library items containing standard methods to easily create class instances from the Spotify
     API. Child classes of this class must be
-    [implemented in all info providers.](/providers/library.py file)
+    [implemented in all info providers.](../providers/library.py file.md)
     """
 
     @classmethod
