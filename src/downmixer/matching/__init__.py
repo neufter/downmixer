@@ -21,16 +21,19 @@ class MatchQuality(Enum):
     """Thresholds to consider when getting the quality of a match. Values are based on the sum of all matches - if
     all are perfect, equals to 400.
 
-    ## Perfect `score over 390`
-    Both songs are the same. Some lenience is given in case an artist isn't included in the artist list for example.
+    ## Perfect (score equals 400)
+    Both songs are exactly the same.
 
-    ## Good `score over 280`
+    ## Great (score over 390)
+    Extremely likely songs are the same. Different platforms usually have small discrepancies in the matching value.
+
+    ## Good (score over 280)
     Likely a different version of the same song, like a live version for example.
 
-    ## Mediocre `score over 150`
+    ## Mediocre (score over 150)
     Probably a cover from another artist or something else from the same artist.
 
-    ## Bad `score over 0`
+    ## Bad (score equals 0)
     Not the same song.
     """
 
