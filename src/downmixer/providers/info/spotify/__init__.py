@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 
 import spotipy
 
@@ -9,6 +10,13 @@ from downmixer.providers import BaseInfoProvider
 from .utils import check_valid, ResourceType
 
 logger = logging.getLogger("downmixer").getChild(__name__)
+
+resource_type_map = {
+    ResourceType.SONG: "track",
+    ResourceType.ALBUM: "album",
+    ResourceType.PLAYLIST: "playlist",
+    ResourceType.ARTIST: "artist",
+}
 
 
 def _get_all(func, limit=50, *args, **kwargs):
@@ -36,6 +44,20 @@ class SpotifyInfoProvider(BaseInfoProvider):
         )
 
         self.connected = True
+
+    def get_resource_type(self, value: str) -> ResourceType | None:
+        if not check_valid(value):
+            return None
+
+        pattern = r"spotify(?:.com)?(?::|\/)(\w*)(?::|\/)(?:\w{20,24})"
+        matches = re.search(pattern, value)
+
+        if matches is None:
+            return None
+        else:
+            return list(resource_type_map.keys())[
+                list(resource_type_map.values()).index(matches.group(1).lower())
+            ]
 
     def check_valid_url(self, url: str, type_filter: list[ResourceType] = None) -> bool:
         return utils.check_valid(url, type_filter)

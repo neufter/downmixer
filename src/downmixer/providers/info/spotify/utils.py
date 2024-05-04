@@ -12,21 +12,6 @@ resource_type_map = {
 }
 
 
-def get_resource_type(value: str) -> ResourceType | None:
-    if not check_valid(value):
-        return None
-
-    pattern = r"spotify(?:.com)?(?::|\/)(\w*)(?::|\/)(?:\w{20,24})"
-    matches = re.search(pattern, value)
-
-    if matches is None:
-        return None
-    else:
-        return list(resource_type_map.keys())[
-            list(resource_type_map.values()).index(matches.group(1).lower())
-        ]
-
-
 def check_valid(value: str, type_filter: list[ResourceType] = None) -> bool:
     """Checks using a regex if a string is a valid Spotify ID, URI or URL.
 

@@ -188,6 +188,14 @@ class BaseInfoProvider:
     def check_valid_url(self, url: str, type_filter: list[ResourceType] = None) -> bool:
         pass
 
+    def get_resource_type(self, value: str) -> ResourceType | None:
+        """Determines the `ResourceType` of the library item.
+
+        Returns:
+            Instance of `ResourceType` enum.
+        """
+        pass
+
     def connect(self):
         """"""
         pass
@@ -200,7 +208,7 @@ class BaseInfoProvider:
             track_id (str): A string containing a valid ID for the provider.
 
         Returns:
-            Song object with the metadata retrieved from he provider.
+            Song object with the metadata retrieved from the provider.
         """
         if not self.connected:
             raise NotConnectedException(

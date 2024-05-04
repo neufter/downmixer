@@ -9,7 +9,6 @@ from downmixer import processing, log
 from downmixer import providers
 from downmixer.providers import ResourceType
 from downmixer.providers.info.spotify import check_valid
-from downmixer.providers.info.spotify.utils import get_resource_type
 
 logger = logging.getLogger("downmixer").getChild(__name__)
 
@@ -70,7 +69,6 @@ def command_line():
 
         with tempfile.TemporaryDirectory() as temp:
             logger.debug(f"temp folder: {temp}")
-            rtype = get_resource_type(args.id)
 
             processor = processing.BasicProcessor(
                 [
@@ -91,6 +89,9 @@ def command_line():
                 args.output,
                 Path(temp),
             )
+
+            rtype = processor.info_provider.get_resource_type(args.id)
+
             if rtype == ResourceType.SONG:
                 logger.debug("Downloading one track")
                 asyncio.run(processor.process_song(args.id))
