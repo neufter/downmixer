@@ -8,7 +8,6 @@ from pathlib import Path
 from downmixer import processing, log
 from downmixer import providers
 from downmixer.providers import ResourceType
-from downmixer.providers.info.spotify import check_valid
 
 logger = logging.getLogger("downmixer").getChild(__name__)
 
@@ -61,12 +60,6 @@ def command_line():
     if args.procedure == "download":
         logger.debug("Running download command")
 
-        if not check_valid(
-            args.id,
-            [ResourceType.SONG, ResourceType.PLAYLIST, ResourceType.ALBUM],
-        ):
-            raise ValueError("id provided isn't valid")
-
         with tempfile.TemporaryDirectory() as temp:
             logger.debug(f"temp folder: {temp}")
 
@@ -90,6 +83,11 @@ def command_line():
                 Path(temp),
             )
 
+            if not processor.info_provider.check_valid_url(
+                args.id,
+                [ResourceType.SONG, ResourceType.PLAYLIST, ResourceType.ALBUM],
+            ):
+                raise ValueError("id provided isn't valid")
             rtype = processor.info_provider.get_resource_type(args.id)
 
             if rtype == ResourceType.SONG:

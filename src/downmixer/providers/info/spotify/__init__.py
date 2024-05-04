@@ -6,8 +6,7 @@ import re
 import spotipy
 
 from .library import SpotifySong, SpotifyPlaylist
-from downmixer.providers import BaseInfoProvider
-from .utils import check_valid, ResourceType
+from downmixer.providers import BaseInfoProvider, ResourceType
 
 logger = logging.getLogger("downmixer").getChild(__name__)
 
@@ -46,7 +45,7 @@ class SpotifyInfoProvider(BaseInfoProvider):
         self.connected = True
 
     def get_resource_type(self, value: str) -> ResourceType | None:
-        if not check_valid(value):
+        if not self.check_valid_url(value):
             return None
 
         pattern = r"spotify(?:.com)?(?::|\/)(\w*)(?::|\/)(?:\w{20,24})"
@@ -60,7 +59,15 @@ class SpotifyInfoProvider(BaseInfoProvider):
             ]
 
     def check_valid_url(self, url: str, type_filter: list[ResourceType] = None) -> bool:
-        return utils.check_valid(url, type_filter)
+        if type_filter is None:
+            type_filter = [e for e in ResourceType]
+
+        for t in type_filter:
+            regex = r"spotify.*" + resource_type_map[t] + r"(?::|\/)(\w{20,24})"
+            if re.search(regex, url) is not None:
+                return True
+
+        return False
 
     def _saved_tracks(
         self, limit: int = 20, offset: int = 0, market: str | None = None

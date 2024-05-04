@@ -1,5 +1,7 @@
 """Defines base provider classes and give default lyrics and audio providers."""
 
+from __future__ import annotations
+
 import importlib
 import pkgutil
 import sys
