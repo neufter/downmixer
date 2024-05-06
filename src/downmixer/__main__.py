@@ -83,6 +83,12 @@ def command_line():
                 Path(temp),
             )
 
+            logger.debug(
+                f"Initialized processor with providers: {processor.info_provider.__class__.__name__}, "
+                f"{processor.audio_provider.__class__.__name__}, "
+                f"{processor.lyrics_provider.__class__.__name__}"
+            )
+
             if not processor.info_provider.check_valid_url(
                 args.id,
                 [ResourceType.SONG, ResourceType.PLAYLIST, ResourceType.ALBUM],
@@ -98,6 +104,8 @@ def command_line():
                 loop = asyncio.new_event_loop()
                 loop.run_until_complete(processor.process_playlist(args.id))
                 loop.close()
+
+    exit()
 
 
 command_line()
