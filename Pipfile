@@ -12,11 +12,11 @@ spotipy = "*"
 yt-dlp = "*"
 python-ffmpeg = "*"
 mutagen = "*"
-requests = "*"
+requests = "2.32.0"
 beautifulsoup4 = "*"
 
 [dev-packages]
-black = "*"
+black = "24.3.0"
 build = "*"
 mkdocs-material = "*"
 mkdocs = "*"
