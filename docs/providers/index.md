@@ -10,7 +10,7 @@ communicate with Downmixer, they are expected to follow a certain structure - ho
 limited on their capabilities.
 
 Providers MUST be packages which have classes derived from a base provider class in their `__init__.py` files.
-Additionally, info providers need a [`library.py` file](library.py file.md) with classes overriding ALL library classes
+Additionally, info providers need a [`library.py` file](library.py%20file.md) with classes overriding ALL library classes
 deriving from `BaseLibraryItem` (`Artist`, `Album`, `Song`, and`Playlist`). These base classes provide async search and
 download methods that must be overridden.
 
@@ -18,7 +18,6 @@ download methods that must be overridden.
 
 ## Info Providers
 
-!!! success ""
 #### Bundled
 - `SpotifyInfoProvider`
 
@@ -27,7 +26,6 @@ the final file's ID3 tags will be sourced from.
 
 ## Audio Providers
 
-!!! success ""
 #### Bundled
 - `YouTubeMusicAudioProvider`
 
@@ -35,7 +33,6 @@ Where the audio file will be downloaded from.
 
 ## Lyrics Providers
 
-!!! success ""
 #### Bundled
 - `AZLyricsProvider`
 
