@@ -1,5 +1,5 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/neufter/downmixer/main/docs/assets/logo_white.svg" style="width: 80vw; max-width: 650px"/>
+<p style="text-align: center">
+    <img alt="Downmixer logo" src="https://raw.githubusercontent.com/neufter/downmixer/main/docs/assets/logo_white.svg" style="width: 80vw; max-width: 650px"/>
 </p>
 
 Download songs from streaming services easily. Can be an alternative or replacement
