@@ -4,11 +4,11 @@
 
 Download songs from streaming services easily. Can be an alternative or replacement
 to [spotDL](https://github.com/spotDL/spotify-downloader), however, it is **only a Python library, *not* a CLI tool**. A
-very simple `download` command is available for convenience only.
+very simple `download` command is available for convenience and testing only.
 
 It is structured to be platform independent - by default, it syncs Spotify libraries downloaded from either Spotify
 itself or YouTube Music, with lyrics from AZLyrics. However, it can be extended to sync from any streaming service using
-any audio file source.
+any audio file source, and any lyrics provider.
 
 ## This project is currently in alpha version.
 
