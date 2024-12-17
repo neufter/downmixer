@@ -5,8 +5,8 @@ import re
 
 import spotipy
 
-from .library import SpotifySong, SpotifyPlaylist
 from downmixer.providers import BaseInfoProvider, ResourceType
+from .library import SpotifySong, SpotifyPlaylist
 
 logger = logging.getLogger("downmixer").getChild(__name__)
 
@@ -69,30 +69,6 @@ class SpotifyInfoProvider(BaseInfoProvider):
 
         return False
 
-    def _saved_tracks(
-        self, limit: int = 20, offset: int = 0, market: str | None = None
-    ) -> list[SpotifySong]:
-        """Helper function to get a list of SpotifySong objects instead of just a dict from the Spotify API."""
-        results = self.client.current_user_saved_tracks(
-            limit=limit, offset=offset, market=market
-        )
-        return SpotifySong.from_provider_list(results["items"])
-
-    def _playlists(self, limit: int = 50, offset: int = 0) -> list[SpotifyPlaylist]:
-        """Helper function to get a list of SpotifyPlaylist objects instead of just a dict from the Spotify API."""
-        results = self.client.current_user_playlists(limit=limit, offset=offset)
-        return SpotifyPlaylist.from_provider_list(results["items"])
-
-    def _playlist_songs(self, playlist_id: SpotifyPlaylist | str) -> list[SpotifySong]:
-        """Helper function to get a list of SpotifySong objects instead of just a dict from the Spotify API."""
-        if type(playlist_id) == SpotifyPlaylist:
-            url = playlist_id.url
-        else:
-            url = playlist_id
-
-        results = self.client.playlist_items(limit=100, playlist_id=url)
-        return SpotifySong.from_provider_list(results["items"])
-
     def get_song(self, track_id: str) -> SpotifySong:
         super().get_song(track_id)
 
@@ -102,16 +78,26 @@ class SpotifyInfoProvider(BaseInfoProvider):
     def get_all_playlist_songs(self, playlist_id: str) -> list[SpotifySong]:
         super().get_all_playlist_songs(playlist_id)
 
-        return self._playlist_songs(playlist_id)
+        if self.check_valid_url(playlist_id, [ResourceType.PLAYLIST]):
+            results = _get_all(
+                self.client.playlist_items, limit=50, playlist_id=playlist_id
+            )
+            return SpotifySong.from_provider_list(results)
+        else:
+            album_info = self.client.album(playlist_id)
+            results = _get_all(self.client.album_tracks, limit=50, album_id=playlist_id)
+            return SpotifySong.from_provider_list(
+                results, extra_data={"album": album_info}
+            )
 
     def get_all_user_playlists(self) -> list[SpotifyPlaylist]:
         super().get_all_user_playlists()
 
-        results = _get_all(self._playlists)
+        results = _get_all(self.client.current_user_playlists)
         return SpotifyPlaylist.from_provider_list(results)
 
     def get_all_user_songs(self) -> list[SpotifySong]:
         super().get_all_user_songs()
 
-        results = _get_all(self._saved_tracks, limit=50)
+        results = _get_all(self.client.current_user_saved_tracks, limit=50)
         return SpotifySong.from_provider_list(results)
