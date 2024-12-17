@@ -228,14 +228,16 @@ class BaseInfoProvider:
             playlist_id (str): A string containing a valid ID for the provider.
 
         Returns:
-            User's playlists as a list of Playlist objects.
+            User's playlists as a list of Song objects.
         """
         if not self.connected:
             raise NotConnectedException(
                 "Not connected to platform, cannot retrieve data"
             )
 
-        if not self.check_valid_url(playlist_id, [ResourceType.PLAYLIST]):
+        if not self.check_valid_url(
+            playlist_id, [ResourceType.PLAYLIST, ResourceType.ALBUM]
+        ):
             raise ValueError(f"{playlist_id} is an invalid playlist URL or ID")
 
         pass
