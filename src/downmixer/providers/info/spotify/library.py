@@ -5,7 +5,9 @@ from downmixer.library import Album, Artist, Song, Playlist
 
 class SpotifyArtist(Artist):
     @classmethod
-    def from_provider(cls, data: dict[str, Any]) -> "SpotifyArtist":
+    def from_provider(
+        cls, data: dict[str, Any], extra_data: dict[str, Any] = None
+    ) -> "SpotifyArtist":
         return cls(
             name=data["name"],
             images=data["images"] if "images" in data.keys() else None,
@@ -18,7 +20,9 @@ class SpotifyArtist(Artist):
 
 class SpotifyAlbum(Album):
     @classmethod
-    def from_provider(cls, data: dict[str, Any]) -> "SpotifyAlbum":
+    def from_provider(
+        cls, data: dict[str, Any], extra_data: dict[str, Any] = None
+    ) -> "SpotifyAlbum":
         return cls(
             available_markets=data["available_markets"],
             name=data["name"],
@@ -33,34 +37,52 @@ class SpotifyAlbum(Album):
 
 class SpotifySong(Song):
     @classmethod
-    def from_provider(cls, data: dict[str, Any]) -> "SpotifySong":
+    def from_provider(
+        cls, data: dict[str, Any], extra_data: dict[str, Any] = None
+    ) -> "SpotifySong":
+        if "album" in data.keys():
+            album = data["album"]
+        elif "album" in extra_data.keys():
+            album = extra_data["album"]
+        else:
+            album = None
+
         return cls(
             available_markets=data["available_markets"],
             name=data["name"],
             artists=SpotifyArtist.from_provider_list(data["artists"]),
-            album=SpotifyAlbum.from_provider(data["album"]),
+            album=(SpotifyAlbum.from_provider(album) if album else None),
             duration=data["duration_ms"] / 1000,
             date=data["release_date"] if "release_date" in data.keys() else None,
             track_number=data["track_number"],
-            isrc=data["external_ids"]["isrc"],
+            isrc=(
+                data["external_ids"]["isrc"] if "external_ids" in data.keys() else None
+            ),
             id=data["uri"],
             url=data["external_urls"]["spotify"],
             cover=(
-                data["album"]["images"][0]["url"]
-                if len(data["album"]["images"]) > 0
+                album["images"][0]["url"]
+                if album and len(album["images"]) > 0
                 else None
             ),
         )
 
     @classmethod
-    def from_provider_list(cls, data: list[dict]) -> list["SpotifySong"]:
+    def from_provider_list(
+        cls, data: list[dict], extra_data: dict[str, Any] = None
+    ) -> list["SpotifySong"]:
         """Takes in a list of tracks from the Spotify API and returns a list of SpotifySongs."""
-        return [cls.from_provider(x["track"]) for x in data]
+        try:
+            return [cls.from_provider(x["track"], extra_data) for x in data]
+        except KeyError:
+            return [cls.from_provider(x, extra_data) for x in data]
 
 
 class SpotifyPlaylist(Playlist):
     @classmethod
-    def from_provider(cls, data: dict[str, Any]) -> "SpotifyPlaylist":
+    def from_provider(
+        cls, data: dict[str, Any], extra_data: dict[str, Any] = None
+    ) -> "SpotifyPlaylist":
         return cls(
             name=data["name"],
             description=data["description"],

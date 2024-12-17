@@ -20,11 +20,12 @@ class BaseLibraryItem:
     """
 
     @classmethod
-    def from_provider(cls, data: Any):
+    def from_provider(cls, data: Any, extra_data: dict = None):
         """Create an instance of this class from data coming from a provider's API.
 
         Args:
             data (Any): Data from the provider's API.
+            extra_data (dict, optional): Extra data from provider's API to be used to make instances of this class.
 
         Returns:
              An instance of this class.
@@ -32,11 +33,12 @@ class BaseLibraryItem:
         pass
 
     @classmethod
-    def from_provider_list(cls, data: list[Any]) -> list:
+    def from_provider_list(cls, data: list[Any], extra_data: dict = None) -> list:
         """Creates a list of instances of this class from a list of objects with data coming from a provider's API.
 
         Args:
             data (list[Any]): List of objects with data from the provider's API.
+            extra_data (dict, optional): Extra data from provider's API to be used to make instances of this class.
 
         Returns:
             A list with instances of this class.
