@@ -4,6 +4,7 @@ import asyncio
 import logging
 import shutil
 from pathlib import Path
+from typing import Type
 
 from downmixer.file_tools import tag, utils
 from downmixer.file_tools.convert import Converter
@@ -26,16 +27,23 @@ class BasicProcessor:
     def __init__(
         self,
         info_provider: BaseInfoProvider,
-        audio_provider: BaseAudioProvider,
+        audio_provider_class: Type[BaseAudioProvider],
+        audio_provider_settings: str | None,
         lyrics_provider: BaseLyricsProvider,
         output_folder: Path,
         temp_folder: Path,
-        threads: int = 12,
+        threads: int = 3,
     ):
-        """Basic processing class to search a specific Spotify song and download it, using the default YT Music and
-        AZLyrics providers.
+        """Basic processing class to search an ID and download it, using the providers passed on by the user. For
+        playlist downloads, it uses an [`asyncio.Semaphore`](
+        https://docs.python.org/3/library/asyncio-sync.html#semaphore) with a value of `threads` - so the number of
+        concurrent downloads is equal to the `threads` value.
 
         Args:
+            info_provider (BaseInfoProvider): Class instance to use when searching an ID.
+            audio_provider_class (Type[BaseAudioProvider]): Class reference to use when downloading songs.
+            audio_provider_settings (str, optional): JSON formatted settings for the BaseAudioProvider.
+            lyrics_provider (BaseLyricsProvider): Class instance to use when downloading lyrics.
             output_folder (str): Folder path where the final file will be placed.
             temp_folder (str): Folder path where temporary files will be placed and removed from when processing
                 is finished.
@@ -45,7 +53,8 @@ class BasicProcessor:
         self.temp_folder = temp_folder
 
         self.info_provider = info_provider
-        self.audio_provider = audio_provider
+        self.audio_provider_class = audio_provider_class
+        self.audio_provider_settings = audio_provider_settings
         self.lyrics_provider = lyrics_provider
 
         self.semaphore = asyncio.Semaphore(threads)
@@ -57,35 +66,35 @@ class BasicProcessor:
             lyrics = await self.lyrics_provider.get_lyrics(lyrics_results[0])
             download.song.lyrics = lyrics
 
-    async def pool_processing(self, song: str):
-        logger.debug(f"Starting pool processing of {song}")
+    async def pool_processing(self, id: str):
         async with self.semaphore:
-            logger.debug(f"Processing song '{song}'")
-            await self.process_song(song)
+            logger.debug(f"Processing song '{id}'")
+            await self.process_song(id)
 
     async def process_playlist(self, playlist_id: str):
-        """Makes a queue of tasks to download all songs in a Spotify playlist.
+        """Searches and downloads all songs in a playlist using a queue with limited threads.
 
         Args:
-            playlist_id (str): V"""
+            playlist_id (str): ID for the playlist to be downloaded."""
         songs = self.info_provider.get_all_playlist_songs(playlist_id)
 
         tasks = [self.pool_processing(s.id) for s in songs]
         await asyncio.gather(*tasks)
 
     async def process_song(self, song_id: str):
-        """Searches and downloads a song based on Spotify data.
+        """Searches and downloads a single song based on data provided by a `BaseInfoProvider`.
 
         Args:
-            song_id (str): Valid ID, URI or URL of a Spotify track.
+            song_id (str): Valid ID of a single track.
         """
         song = self.info_provider.get_song(song_id)
+        audio_provider = self.audio_provider_class(self.audio_provider_settings)
 
-        result = await self.audio_provider.search(song)
+        result = await audio_provider.search(song)
         if result is None:
             logger.warning("Song not found", extra={"songinfo": song.__dict__})
             return
-        downloaded = await self.audio_provider.download(result[0], self.temp_folder)
+        downloaded = await audio_provider.download(result[0], self.temp_folder)
         converted = await _convert_download(downloaded)
 
         await self._get_lyrics(converted)
