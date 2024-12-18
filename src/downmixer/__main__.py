@@ -152,4 +152,5 @@ def command_line():
     exit()
 
 
-command_line()
+if __name__ == "__main__":
+    command_line()
