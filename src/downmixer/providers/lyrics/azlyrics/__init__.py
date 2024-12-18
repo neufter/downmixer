@@ -45,7 +45,8 @@ def search_result_from_azlyrics(
 class AZLyricsProvider(BaseLyricsProvider):
     provider_name = "azlyrics"
 
-    def __init__(self):
+    def __init__(self, options: dict = None):
+        super().__init__({})
         headers = {
             "Connection": "keep-alive",
             "Pragma": "no-cache",

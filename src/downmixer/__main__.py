@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import json
 import logging
 import os
 import tempfile
@@ -36,6 +37,13 @@ parser.add_argument(
     help=f"Info provider extending BaseInfoProvider to use. Defaults to 'SpotifyInfoProvider'.",
 )
 parser.add_argument(
+    "-ip-settings",
+    "--info-provider-settings",
+    type=str,
+    default=None,
+    help="Settings for the info provider as a JSON string. See documentation for available options for each provider.",
+)
+parser.add_argument(
     "-ap",
     "--audio-provider",
     type=str,
@@ -44,12 +52,26 @@ parser.add_argument(
     help=f"Audio provider extending BaseAudioProvider to use. Defaults to 'YouTubeMusicAudioProvider'.",
 )
 parser.add_argument(
+    "-ap-settings",
+    "--audio-provider-settings",
+    type=str,
+    default=None,
+    help="Settings for the audio provider as a JSON string. See documentation for available options for each provider.",
+)
+parser.add_argument(
     "-lp",
     "--lyrics-provider",
     type=str,
     default="AZLyricsProvider",
     choices=[x.__name__ for x in providers.get_all_lyrics_providers()],
     help=f"Lyrics provider extending BaseLyricsProvider to use. Defaults to 'AZLyricsProvider'.",
+)
+parser.add_argument(
+    "-lp-settings",
+    "--lyrics-provider-settings",
+    type=str,
+    default=None,
+    help="Settings for the lyrics provider as a JSON string. See documentation for available options for each provider.",
 )
 args = parser.parse_args()
 
@@ -63,22 +85,42 @@ def command_line():
         with tempfile.TemporaryDirectory() as temp:
             logger.debug(f"temp folder: {temp}")
 
+            selected_info_provider = [
+                x
+                for x in providers.get_all_info_providers()
+                if x.__name__ == args.info_provider
+            ][0]
+            selected_audio_provider = [
+                x
+                for x in providers.get_all_audio_providers()
+                if x.__name__ == args.audio_provider
+            ][0]
+            selected_lyrics_provider = [
+                x
+                for x in providers.get_all_lyrics_providers()
+                if x.__name__ == args.lyrics_provider
+            ][0]
+
+            ip_settings = (
+                json.loads(args.info_provider_settings)
+                if args.info_provider_settings
+                else None
+            )
+            ap_settings = (
+                json.loads(args.audio_provider_settings)
+                if args.audio_provider_settings
+                else None
+            )
+            lp_settings = (
+                json.loads(args.lyrics_provider_settings)
+                if args.lyrics_provider_settings
+                else None
+            )
+
             processor = processing.BasicProcessor(
-                [
-                    x
-                    for x in providers.get_all_info_providers()
-                    if x.__name__ == args.info_provider
-                ][0](),
-                [
-                    x
-                    for x in providers.get_all_audio_providers()
-                    if x.__name__ == args.audio_provider
-                ][0](),
-                [
-                    x
-                    for x in providers.get_all_lyrics_providers()
-                    if x.__name__ == args.lyrics_provider
-                ][0](),
+                selected_info_provider(ip_settings),
+                selected_audio_provider(ap_settings),
+                selected_lyrics_provider(lp_settings),
                 args.output,
                 Path(temp),
             )
@@ -104,6 +146,8 @@ def command_line():
                 loop = asyncio.new_event_loop()
                 loop.run_until_complete(processor.process_playlist(args.id))
                 loop.close()
+
+            logger.info("Finished processing")
 
     exit()
 

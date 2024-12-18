@@ -11,7 +11,7 @@ from typing import Optional, Any, Callable
 import yt_dlp
 import ytmusicapi
 
-from downmixer import matching
+from downmixer import matching, utils
 from downmixer.file_tools import AudioCodecs
 from downmixer.library import Artist, Album, Song
 from downmixer.providers import BaseAudioProvider, AudioSearchResult, Download
@@ -140,16 +140,13 @@ async def _run_in_loop(func: Callable, kwargs: dict) -> Any:
 class YouTubeMusicAudioProvider(BaseAudioProvider):
     provider_name = "youtube-music"
 
-    def __init__(self, cookies: str = None, *args: Any, **kwargs: Any):
-        """
-        Args:
-            cookies (str): Path to a Netscape formatted text file containing cookies to use in requests.
-        """
-        super().__init__(*args, **kwargs)
+    def __init__(self, options: dict = None):
+        default_options = {"encoding": "UTF-8", "format": "bestaudio"}
+        options = utils.merge_dicts_with_priority(default_options, options)
+        super().__init__(options)
 
-        options = {"encoding": "UTF-8", "format": "bestaudio", "cookiefile": cookies}
-        self.youtube_dl = yt_dlp.YoutubeDL(options)
-        logger.debug(f"Initialized YoutubeDL client with options: {options}")
+        self.youtube_dl = yt_dlp.YoutubeDL(self.options)
+        logger.debug(f"Initialized YoutubeDL client with options: {self.options}")
 
         auth_headers = _get_auth_headers(self.youtube_dl.cookiejar)
 

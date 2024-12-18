@@ -5,6 +5,7 @@ import re
 
 import spotipy
 
+from downmixer import utils
 from downmixer.providers import BaseInfoProvider, ResourceType
 from .library import SpotifySong, SpotifyPlaylist
 
@@ -33,13 +34,18 @@ def _get_all(func, limit=50, *args, **kwargs):
 
 
 class SpotifyInfoProvider(BaseInfoProvider):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, options: dict = None):
+        default_options = {
+            "auth": {
+                "scope": "user-library-read,user-follow-read,playlist-read-private",
+            }
+        }
+        options = utils.merge_dicts_with_priority(default_options, options)
+        super().__init__(options)
+
         # TODO: Manage auth properly
         self.client = spotipy.Spotify(
-            auth_manager=spotipy.SpotifyOAuth(
-                scope="user-library-read,user-follow-read,playlist-read-private"
-            )
+            auth_manager=spotipy.SpotifyOAuth(**options["auth"])
         )
 
         self.connected = True

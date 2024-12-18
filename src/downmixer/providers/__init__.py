@@ -111,6 +111,15 @@ class BaseAudioProvider:
 
     provider_name = ""
 
+    def __init__(self, options: dict = None):
+        """Initializes the provider.
+
+        Args:
+            options (dict): Dictionary of options to pass to the provider. See documentation for each provider for
+                available options.
+        """
+        self.options = options
+
     async def search(self, song: Song) -> Optional[list[AudioSearchResult]]:
         """Retrieves search results as list of `AudioSearchResult` objects ordered by match, highest to lowest.
         Can return None if a problem occurs.
@@ -144,6 +153,15 @@ class BaseLyricsProvider:
     """
 
     provider_name = ""
+
+    def __init__(self, options: dict = None):
+        """Initializes the provider.
+
+        Args:
+            options (dict): Dictionary of options to pass to the provider. See documentation for each provider for
+                available options.
+        """
+        self.options = options
 
     async def search(self, song: Song) -> Optional[list[LyricsSearchResult]]:
         """Retrieves search results as list of `LyricsSearchResult` objects ordered by match, highest to lowest.
@@ -184,8 +202,14 @@ class BaseInfoProvider:
 
     connected = False
 
-    def __init__(self, **kwargs):
-        pass
+    def __init__(self, options: dict = None):
+        """Initializes the provider.
+
+        Args:
+            options (dict): Dictionary of options to pass to the provider. See documentation for each provider for
+                available options.
+        """
+        self.options = options
 
     def check_valid_url(self, url: str, type_filter: list[ResourceType] = None) -> bool:
         pass
