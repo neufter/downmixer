@@ -14,7 +14,7 @@ from downmixer.providers import ResourceType
 logger = logging.getLogger("downmixer").getChild(__name__)
 
 parser = argparse.ArgumentParser(
-    prog="downmixer", description="Easily sync tracks from Spotify."
+    prog="downmixer", description="Easily sync tracks from any streaming service."
 )
 parser.add_argument("procedure", choices=["download"])
 parser.add_argument(
