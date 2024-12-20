@@ -36,17 +36,22 @@ downmixer [OPTIONS] {COMMAND}
 
 ### Options
 
-- `-h, --help`
-    - Show the help message
-- `-o OUTPUT, --output-folder OUTPUT`
-    - Path to the folder in which the final processed files will be placed. By default, this is the current working
-      directory.
-- `-ip {SpotifyInfoProvider}, --info-provider {SpotifyInfoProvider}`
-    - Info provider extending BaseInfoProvider to use. Defaults to 'SpotifyInfoProvider'.
-- `-ap {YouTubeMusicAudioProvider}, --audio-provider {YouTubeMusicAudioProvider}`
-    - Audio provider extending BaseAudioProvider to use. Defaults to 'YouTubeMusicAudioProvider'.
-- `-lp {AZLyricsProvider}, --lyrics-provider {AZLyricsProvider}`
-    - Lyrics provider extending BaseLyricsProvider to use. Defaults to 'AZLyricsProvider'.
-
-
+* `-h, --help`
+  * Show the help message
+* `-t THREADS, --threads THREADS`
+  * Number of threads to use for parallel downloads.
+* `-o OUTPUT, --output-folder OUTPUT`
+  * Path to the folder in which the final processed files will be placed.
+* `-ip PROVIDER, --info-provider PROVIDER`
+  * Info provider extending BaseInfoProvider to use. Defaults to 'SpotifyInfoProvider'.
+* `-ip-settings SETTINGS, --info-provider-settings SETTINGS`
+  * Settings for the info provider as a JSON string. See documentation for available options for each provider.
+* `-ap PROVIDER, --audio-provider PROVIDER`
+  * Audio provider extending BaseAudioProvider to use. Defaults to 'YouTubeMusicAudioProvider'.
+* `-ap-settings SETTINGS, --audio-provider-settings SETTINGS`
+  * Settings for the audio provider as a JSON string. See documentation for available options for each provider.
+* `-lp PROVIDER, --lyrics-provider PROVIDER`
+  * Lyrics provider extending BaseLyricsProvider to use. Defaults to 'AZLyricsProvider'.
+* `-lp-settings SETTINGS, --lyrics-provider-settings SETTINGS`
+  * Settings for the lyrics provider as a JSON string. See documentation for available options for each provider.
 

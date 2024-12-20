@@ -22,6 +22,7 @@ parser.add_argument(
     help="A valid Spotify ID, URI or URL for a track, album or playlist.",
 )
 parser.add_argument(
+    "-t",
     "--threads",
     default=3,
     type=int,
