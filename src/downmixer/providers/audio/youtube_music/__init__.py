@@ -168,7 +168,7 @@ class YouTubeMusicAudioProvider(BaseAudioProvider):
         results = self.client.search(query, filter="songs", ignore_spelling=True)
 
         if len(results) == 0:
-            logger.info("Search returned no results")
+            logger.warning("Search returned no results")
             return None
 
         result_objects = []
@@ -183,23 +183,20 @@ class YouTubeMusicAudioProvider(BaseAudioProvider):
         ordered_results = sorted(
             result_objects, reverse=True, key=lambda x: x.match.sum
         )
-        logger.info(f"Ordered {len(ordered_results)} results")
+        logger.debug(f"Ordered {len(ordered_results)} results")
         return ordered_results
 
     async def download(
-        self, result: AudioSearchResult, path: Path = ""
+        self, result: AudioSearchResult, path: Path
     ) -> Optional[Download]:
         logger.info(
             f"Starting download for search result '{result.song.title}' with URL {result.download_url}"
         )
 
-        # TODO: check before replacing file
-        # TODO: make file download to temp folder
-        if path != "":
-            # Define output path of YoutubeDL on the fly
-            self.youtube_dl.params["outtmpl"]["default"] = (
-                str(path.absolute()) + "/%(id)s.%(ext)s"
-            )
+        # Set output path of YoutubeDL on the fly
+        self.youtube_dl.params["outtmpl"]["default"] = (
+            str(path.absolute()) + "/%(id)s.%(ext)s"
+        )
         url = result.download_url
         metadata = await _run_in_loop(
             self.youtube_dl.extract_info, {"url": url, "download": True}
