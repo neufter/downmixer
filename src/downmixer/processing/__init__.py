@@ -1,5 +1,7 @@
 """Takes a playlist or song and processes it using audio and lyric providers."""
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import shutil

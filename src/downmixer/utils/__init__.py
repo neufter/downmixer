@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def merge_dicts_with_priority(dict1: dict, dict2: dict | None) -> dict:
     """Merges two dictionaries with priority to `dict1`.
 
