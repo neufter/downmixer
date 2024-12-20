@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import tempfile
+import time
 from pathlib import Path
 
 from downmixer import processing, log
@@ -19,6 +20,12 @@ parser.add_argument("procedure", choices=["download"])
 parser.add_argument(
     "id",
     help="A valid Spotify ID, URI or URL for a track, album or playlist.",
+)
+parser.add_argument(
+    "--threads",
+    default=3,
+    type=int,
+    help="Number of threads to use for parallel downloads.",
 )
 parser.add_argument(
     "-o",
@@ -80,7 +87,7 @@ def command_line():
     log.setup_logging(debug=True)
 
     if args.procedure == "download":
-        logger.debug("Running download command")
+        logger.info("Running download command")
 
         with tempfile.TemporaryDirectory() as temp:
             logger.debug(f"temp folder: {temp}")
@@ -119,15 +126,17 @@ def command_line():
 
             processor = processing.BasicProcessor(
                 selected_info_provider(ip_settings),
-                selected_audio_provider(ap_settings),
+                selected_audio_provider,
+                ap_settings,
                 selected_lyrics_provider(lp_settings),
                 args.output,
                 Path(temp),
+                args.threads,
             )
 
             logger.debug(
                 f"Initialized processor with providers: {processor.info_provider.__class__.__name__}, "
-                f"{processor.audio_provider.__class__.__name__}, "
+                f"{selected_audio_provider.__class__.__name__}, "
                 f"{processor.lyrics_provider.__class__.__name__}"
             )
 
@@ -138,16 +147,17 @@ def command_line():
                 raise ValueError("id provided isn't valid")
             rtype = processor.info_provider.get_resource_type(args.id)
 
+            start = time.time()
             if rtype == ResourceType.SONG:
-                logger.debug("Downloading one track")
+                logger.info("Downloading one track")
                 asyncio.run(processor.process_song(args.id))
             else:
-                logger.debug("Downloading many tracks")
+                logger.info("Downloading many tracks")
                 loop = asyncio.new_event_loop()
                 loop.run_until_complete(processor.process_playlist(args.id))
                 loop.close()
 
-            logger.info("Finished processing")
+            logger.info(f"Finished processing in {time.time() - start} seconds")
 
     exit()
 
