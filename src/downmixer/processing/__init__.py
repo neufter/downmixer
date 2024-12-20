@@ -70,23 +70,23 @@ class BasicProcessor:
             lyrics = await self.lyrics_provider.get_lyrics(lyrics_results[0])
             download.song.lyrics = lyrics
 
-    async def pool_processing(self, id: str):
+    async def pool_processing(self, song_id: str):
         async with self.semaphore:
-            logger.debug(f"Processing song '{id}'")
+            logger.debug(f"Processing song '{song_id}'")
             retries = 0
             while retries <= self.max_retries:
                 try:
-                    await self.process_song(id)
+                    await self.process_song(song_id)
                     return
                 except Exception as e:
                     # TODO: Pick out exceptions instead of catching all exceptions
                     logger.warning(
-                        f"Error processing song '{id}', retrying ({self.max_retries - retries} left)",
+                        f"Error processing song '{song_id}', retrying ({self.max_retries - retries} left)",
                         exc_info=e,
                     )
                     retries += 1
 
-            logger.error(f"Max retries exceeded for song '{id}'")
+            logger.error(f"Max retries exceeded for song '{song_id}'")
 
     async def process_playlist(self, playlist_id: str):
         """Searches and downloads all songs in a playlist using a queue with limited threads.

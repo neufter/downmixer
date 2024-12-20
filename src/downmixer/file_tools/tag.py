@@ -5,6 +5,7 @@ from typing import Any, Optional
 from urllib.request import urlopen
 
 import mutagen
+# noinspection PyProtectedMember
 from mutagen.id3 import APIC, USLT, ID3
 
 from downmixer.providers import Download
