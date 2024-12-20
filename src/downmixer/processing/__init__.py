@@ -33,6 +33,7 @@ class BasicProcessor:
         output_folder: Path,
         temp_folder: Path,
         threads: int = 3,
+        max_retries: int = 10,
     ):
         """Basic processing class to search an ID and download it, using the providers passed on by the user. For
         playlist downloads, it uses an [`asyncio.Semaphore`](
@@ -57,6 +58,7 @@ class BasicProcessor:
         self.audio_provider_settings = audio_provider_settings
         self.lyrics_provider = lyrics_provider
 
+        self.max_retries = max_retries
         self.semaphore = asyncio.Semaphore(threads)
 
     async def _get_lyrics(self, download: Download):
@@ -69,7 +71,20 @@ class BasicProcessor:
     async def pool_processing(self, id: str):
         async with self.semaphore:
             logger.debug(f"Processing song '{id}'")
-            await self.process_song(id)
+            retries = 0
+            while retries <= self.max_retries:
+                try:
+                    await self.process_song(id)
+                    return
+                except Exception as e:
+                    # TODO: Pick out exceptions instead of catching all exceptions
+                    logger.warning(
+                        f"Error processing song '{id}', retrying ({self.max_retries - retries} left)",
+                        exc_info=e,
+                    )
+                    retries += 1
+
+            logger.error(f"Max retries exceeded for song '{id}'")
 
     async def process_playlist(self, playlist_id: str):
         """Searches and downloads all songs in a playlist using a queue with limited threads.
